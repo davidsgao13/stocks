@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application) // Android application plugin
     alias(libs.plugins.kotlin.android) // Kotlin support in Android
     alias(libs.plugins.kotlin.parcelize) // Parcelize plugin for Parcelable
+    alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ksp) // Kotlin Symbol Processing with version
     alias(libs.plugins.compose.compiler)
 }
@@ -23,7 +24,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.stocks"
-        minSdk = 26
+        minSdk = 24
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
@@ -51,7 +52,7 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.2.0"
+        kotlinCompilerExtensionVersion = "1.5.1"
     }
     packaging {
         resources {
@@ -61,15 +62,16 @@ android {
 }
 
 dependencies {
+    // General libraries
     implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.ui)
-    implementation(libs.androidx.ui.tooling.preview)
-    debugImplementation(libs.androidx.ui.tooling)
-    androidTestImplementation(libs.androidx.ui.test.junit4)
+    implementation(libs.androidx.compose.material3)
+    implementation(libs.androidx.compose.ui)
+    implementation(libs.androidx.compose.ui.tooling.preview)
+    debugImplementation(libs.androidx.compose.ui.tooling)
+    androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     implementation(libs.androidx.lifecycle.runtime.ktx)
-    implementation(libs.androidx.material3)
     androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
+    androidTestImplementation(libs.androidx.test.espresso.core)
     coreLibraryDesugaring(libs.desugar.jdk.libs)
     testImplementation(libs.junit)
 
@@ -82,14 +84,14 @@ dependencies {
     implementation(libs.accompanist.swiperefresh)
 
     // Compose Nav Destinations
-    implementation(libs.core)
+    implementation(libs.navigation.compose)
+    implementation(libs.kotlinx.serialization.json)
     ksp(libs.ksp)
 
     // Dagger - Hilt
     implementation(libs.hilt.android)
     ksp(libs.hilt.android.compiler)
     ksp(libs.androidx.hilt.compiler)
-    implementation(libs.androidx.hilt.navigation.compose)
 
     // Retrofit
     implementation(libs.retrofit)
