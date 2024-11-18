@@ -24,7 +24,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.stocks"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
@@ -33,7 +33,16 @@ android {
     }
 
     buildTypes {
+        debug {
+            isDebuggable = true
+            isMinifyEnabled = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+        }
         release {
+            isDebuggable = false
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -72,7 +81,6 @@ dependencies {
     implementation(libs.androidx.lifecycle.runtime.ktx)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.test.espresso.core)
-    coreLibraryDesugaring(libs.desugar.jdk.libs)
     testImplementation(libs.junit)
 
     // OpenCSV
