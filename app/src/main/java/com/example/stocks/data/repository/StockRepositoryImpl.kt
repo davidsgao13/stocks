@@ -1,6 +1,5 @@
 package com.example.stocks.data.repository
 
-import com.example.stocks.BuildConfig
 import com.example.stocks.data.local.StockDatabase
 import com.example.stocks.data.mapper.toCompanyListing
 import com.example.stocks.data.remote.StockApi
