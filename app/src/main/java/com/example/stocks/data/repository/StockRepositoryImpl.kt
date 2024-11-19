@@ -1,7 +1,9 @@
 package com.example.stocks.data.repository
 
+import com.example.stocks.data.csv.CSVParser
 import com.example.stocks.data.local.StockDatabase
 import com.example.stocks.data.mapper.toCompanyListing
+import com.example.stocks.data.mapper.toCompanyListingEntity
 import com.example.stocks.data.remote.StockApi
 import com.example.stocks.domain.model.CompanyListing
 import com.example.stocks.domain.repository.StockRepository
@@ -34,7 +36,14 @@ import javax.inject.Singleton
 @Singleton
 class StockRepositoryImpl @Inject constructor(
     private val stockApi: StockApi,
-    stockDatabase: StockDatabase
+    stockDatabase: StockDatabase,
+    // Note that we are implementing CSVParser<CompanyListing> rather than CompanyListingsParser
+    // because we want to depend on the abstraction and not the concretion. We just simply
+    // pass in the CompanyListing object to the CSVParser, and since we wrote a
+    // CompanyListingsParser that implements CSVParser<CompanyListing>, it will use that
+    // functionality. If CompanyListingsParser were to ever change, since we're just using the
+    // interface with CSVParser<CompanyListing>, we wouldn't need to change anything
+    private val companyListingsParser: CSVParser<CompanyListing>
 ) : StockRepository {
 
     /**
@@ -116,14 +125,44 @@ class StockRepositoryImpl @Inject constructor(
             val remoteListings = try {
                 // Use our stockApi to getListings()
                 val response = stockApi.getListings()
+                // Pass the response.byteStream() InputStream to the parser in order to parse
+                // the result of our response
+                companyListingsParser.parse(response.byteStream())
             } catch (e: IOException) {
                 // IOException fires if something goes wrong with parsing the data
                 e.printStackTrace()
                 emit(Resource.Error(message = "Couldn't load data."))
+                null
             } catch (e: HttpException) {
                 // HttpException fires if the response is a failure (e.g. 400).
                 e.printStackTrace()
                 emit(Resource.Error(message = "Response failure."))
+                null
+            }
+            // If remoteListings isn't null
+            remoteListings?.let { listings ->
+                // Clear the database, then add the returned listings as entities in the database
+                dao.clearCompanyListings()
+                dao.insertCompanyListings(listings.map { it.toCompanyListingEntity() })
+                // Then return a Success with all the listings attached for future use and emit
+                // Resource.Loading(false) to let whatever is observing the flow know that we have
+                // finished loading.
+                emit(Resource.Success(
+                    // We do this in order to stick to the single source of truth principle.
+                    // We only  want to get data from the database; we shouldn't pass data
+                    // directly from the API to the UI. Instead, what we should do is take the data
+                    // from the API, insert it into the database, and then query the database so
+                    // that we're loading from the database. If we had written:
+                    //
+                    // emit(Resource.Success(listing))
+                    //
+                    // Then we wouldn't be adhering to the single source of truth principle, since
+                    // we're directly emitting data retrieved from the API rather than retrieving
+                    // it from the database, which should be our source of truth.
+
+                    data = dao.searchCompanyListing("").map { it.toCompanyListing() }
+                ))
+                emit(Resource.Loading(false))
             }
         }
     }
