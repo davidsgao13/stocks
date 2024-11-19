@@ -41,11 +41,14 @@ android {
     buildTypes {
         debug {
             isDebuggable = true
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            applicationIdSuffix = ".debug"
+            versionNameSuffix = "-debug"
         }
         release {
             isDebuggable = false

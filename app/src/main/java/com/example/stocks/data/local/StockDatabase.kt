@@ -1,6 +1,7 @@
 package com.example.stocks.data.local
 
 import androidx.room.Database
+import androidx.room.RoomDatabase
 
 /**
  * @Database annotation is necessary for Room to understand that this is a Room database.
@@ -12,6 +13,6 @@ import androidx.room.Database
     entities = [CompanyListingEntity::class],
     version = 1
 )
-abstract class StockDatabase() {
+abstract class StockDatabase : RoomDatabase() {
     abstract val dao: StockDao
 }

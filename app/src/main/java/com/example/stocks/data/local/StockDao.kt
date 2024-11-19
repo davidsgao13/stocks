@@ -23,8 +23,7 @@ interface StockDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertCompanyListings(
         companyListingEntities: List<CompanyListingEntity>
-    ) {
-    }
+    )
 
     /**
      * @Query allows us to write raw SQL queries for custom deletion operations. Since it supports
