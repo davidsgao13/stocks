@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ksp) // Kotlin Symbol Processing with version
     alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.google.secrets)
 }
 
 kotlin {
@@ -23,19 +24,24 @@ android {
     compileSdk = 35
 
     defaultConfig {
+        buildFeatures {
+            buildConfig = true
+        }
+        defaultConfig {
+            // Secrets to be read
+        }
         applicationId = "com.example.stocks"
         minSdk = 26
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
         debug {
             isDebuggable = true
-            isMinifyEnabled = true
+            isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -43,7 +49,8 @@ android {
         }
         release {
             isDebuggable = false
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"

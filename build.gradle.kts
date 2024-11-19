@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.kotlin.serialization) apply false // For Kotlin serialization
     alias(libs.plugins.ksp) apply false                 // Kotlin Symbol Processing
     alias(libs.plugins.compose.compiler) apply false    // For Jetpack Compose Compiler
+    alias(libs.plugins.google.secrets) apply false
 }
 
 // Task to clean the build directory
