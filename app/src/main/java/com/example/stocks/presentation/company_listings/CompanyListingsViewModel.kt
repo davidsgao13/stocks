@@ -70,18 +70,20 @@ class CompanyListingsViewModel @Inject constructor(
                    copy(searchQuery = event.query)
                 }
                 // If we already have a search job running, we should cancel it if we start a
-                // new search. For example, if I type something, then .3s later I type another
+                // new search. For example, if I type something, then .5s later I type another
                 // letter, we shouldn't search twice; we should just cancel the first job and
                 // wait until the user has completed typing in their search result before
                 // actually making the getCompanyListings() request.
-                searchJob?.cancel()
-                searchJob = viewModelScope.launch {
-                    // We need to add this delay to ensure that we don't search instantly the
-                    // moment a user types anything into the search bar
-                    delay(500L)
-                    getCompanyListings()
-                }
+                debounceSearch { getCompanyListings() }
             }
+        }
+    }
+
+    private fun debounceSearch(block: suspend () -> Unit) {
+        searchJob?.cancel() // Cancel current search if it exists
+        searchJob = viewModelScope.launch {
+            delay(500L) // Wait 500ms before executing
+            block()
         }
     }
 

@@ -103,6 +103,7 @@ dependencies {
 
     // Compose Nav Destinations
     implementation(libs.navigation.compose)
+    implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.kotlinx.serialization.json)
     ksp(libs.ksp)
 
