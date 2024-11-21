@@ -5,9 +5,16 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import com.example.stocks.presentation.navigation.AppNavigation
+import com.example.stocks.presentation.navigation.NavigationHandler
 import com.example.stocks.ui.theme.StocksTheme
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    @Inject
+    lateinit var navigationHandler: NavigationHandler
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -17,7 +24,7 @@ class MainActivity : ComponentActivity() {
                 // function) to keep the MainActivity focused on high-level app setup. In this case,
                 // we're going to abstract to AppNavigation, which acts as the main navigation
                 // container for the application. It manages both the UI and the navigation state
-                AppNavigation()
+                AppNavigation(navigationHandler = navigationHandler)
             }
         }
     }

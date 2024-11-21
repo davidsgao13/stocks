@@ -10,11 +10,6 @@ sealed interface StockDestination : NavigationDestination {
     }
 
     @Serializable
-    object MainScreen : StockDestination {
-        override val route = "main_screen"
-    }
-
-    @Serializable
     data class CompanyDetails(val symbol: String) : StockDestination {
         override val route = "company_details"
     }

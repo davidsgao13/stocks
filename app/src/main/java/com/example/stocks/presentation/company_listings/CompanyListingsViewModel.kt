@@ -3,7 +3,9 @@ package com.example.stocks.presentation.company_listings
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.stocks.domain.navigation.StockDestination
 import com.example.stocks.domain.repository.StockRepository
+import com.example.stocks.domain.use_case.navigation.NavigationUseCase
 import com.example.stocks.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -22,11 +24,23 @@ import javax.inject.Inject
 @HiltViewModel
 class CompanyListingsViewModel @Inject constructor(
     private val repository: StockRepository,
-    private val savedStateHandle: SavedStateHandle
+    private val savedStateHandle: SavedStateHandle,
+    private val navigationUseCase: NavigationUseCase
 ) : ViewModel() {
 
     private var _state = MutableStateFlow(CompanyListingsState())
     val state = _state.asStateFlow() // Exposed read only value of state
+
+    /**
+     * This UseCase abstracts navigation events and centralizes navigation-related decisions.
+     * The UseCase is being implemented by the NavigationCoordinator; calling navigation()
+     * will invoke NavigationCoordinator.navigate()
+     */
+    fun onCompanySelected(symbol: String) {
+        viewModelScope.launch {
+            navigationUseCase.navigate(StockDestination.CompanyDetails(symbol))
+        }
+    }
 
     /**
      * Whenever we type anything in our search bar, we will automatically search. We should
