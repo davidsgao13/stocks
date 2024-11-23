@@ -1,15 +1,21 @@
 package com.example.stocks.presentation.company_listings
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.ComposeNavigator
+import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 
 /**
@@ -39,6 +45,17 @@ fun CompanyListingsScreen(
     )
     Column(modifier = Modifier.fillMaxSize()) {
         OutlinedTextField(
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth(),
+            // Create a placeholder Text composable to be displayed when the text field is in focus
+            // and the input text is empty. The default text style for internal Text is
+            // Typography.Large
+            placeholder = {
+                Text(text = "Search...")
+            },
+            maxLines = 1,
+            singleLine = true,
             value = state.searchQuery,
             onValueChange = {
                 /**
@@ -53,9 +70,41 @@ fun CompanyListingsScreen(
                  * The new text is passed as it to the onValueChange lambda.
                  * The lambda sends an event to the ViewModel, e.g.
                  */
-
                 viewModel.onEvent(CompanyListingsEvent.OnSearchQueryChanged(it))
             }
         )
+        SwipeRefresh(
+            state = swipeRefreshState,
+            onRefresh = {
+                viewModel.onEvent(CompanyListingsEvent.Refresh)
+            }
+        ) {
+            LazyColumn(
+                modifier = Modifier.fillMaxSize()
+            ) {
+                // Normally we would use items(state.listings) to show all of the listings; however,
+                // we're going to be applying specific view logic just above the LazyColumn since
+                // we want to create a horizontal divider to visually separate the LazyColumn
+                // from the search bar.
+                items(state.listings.size) { index ->
+                    CompanyItem(
+                        company = state.listings[index],
+                        // Ensures the whole CompanyItem stretches across the row by passing in
+                        // the fillsMaxWidth() modifier to the CompanyItem.
+                        modifier = Modifier.fillMaxWidth()
+                            .clickable {
+                                // Clicking on the CompanyItem should navigate to the detail screen
+                                //TODO: Navigate to detail screen
+                            }
+                            .padding(16.dp)
+                    )
+                    if (index < state.listings.size) {
+                        HorizontalDivider(modifier = Modifier.padding(
+                            horizontal = 16.dp
+                        ))
+                    }
+                }
+            }
+        }
     }
 }

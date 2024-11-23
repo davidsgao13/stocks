@@ -21,9 +21,21 @@ import com.example.stocks.domain.model.CompanyListing
 @Composable
 fun CompanyItem(
     company: CompanyListing,
+    modifier: Modifier = Modifier
 ) {
+    /**
+     * Why are we accepting a modifier as an argument for CompanyItem? Because this modifier that
+     * we're passing in will be used on the root container (Row) of the composable. The child
+     * composables inside of the Row have their own modifiers and don't inherit from the parent,
+     * but in the case of the Row, we want to inherit whatever size we're being passed so that
+     * we can make the CompanyItem reusable across different sizes. In this case, the LazyColumn
+     * is instantiating CompanyItem views, so it passes in a modifier of fillMaxWidth() to the
+     * CompanyItem, with maxWidth() in relation to the parent LazyColumn. This ensures that on
+     * the CompanyListingsScreen, each CompanyItem extends the max width of its parent composable.
+     */
+
     Row(
-        modifier = Modifier,
+        modifier = modifier,
         verticalAlignment = Alignment.CenterVertically
     ) {
         Column(
