@@ -16,6 +16,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.stocks.presentation.destinations.CompanyInfoScreenDestination
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.ramcosta.composedestinations.annotation.Destination
@@ -94,13 +95,17 @@ fun CompanyListingsScreen(
                 // we want to create a horizontal divider to visually separate the LazyColumn
                 // from the search bar.
                 items(state.listings.size) { index ->
+                    val company = state.listings[index]
                     CompanyItem(
-                        company = state.listings[index],
+                        company = company,
                         // Ensures the whole CompanyItem stretches across the row by passing in
                         // the fillsMaxWidth() modifier to the CompanyItem.
                         modifier = Modifier.fillMaxWidth()
                             .clickable {
                                 // Clicking on the CompanyItem should navigate to the detail screen
+                                navigator.navigate(
+                                    CompanyInfoScreenDestination(company.symbol)
+                                )
                                 //TODO: Navigate to detail screen
                             }
                             .padding(16.dp)

@@ -8,7 +8,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.InputStream
 import java.io.InputStreamReader
-import java.time.LocalDateTime
+import java.time.LocalDate
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -54,7 +54,7 @@ class IntradayInfoParser @Inject constructor() : CSVParser<IntradayInfo> {
                     // only showing yesterday's values, and not entries from any days prior.
                     // We get the current date, subtract one day, find the day of the month, and if
                     // that day of the month is equal to the date in the entry, we'll keep the entry
-                    it.date.dayOfMonth == LocalDateTime.now().minusDays(1).dayOfMonth
+                    it.date.dayOfMonth == LocalDate.now().minusDays(4).dayOfMonth
                 }.sortedBy {
                     // Sort by the hour of each entry
                     it.date.hour

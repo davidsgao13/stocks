@@ -1,14 +1,13 @@
 package com.example.stocks
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
-import com.example.stocks.presentation.company_listings.NavGraphs
+import com.example.stocks.presentation.NavGraphs
 import com.example.stocks.ui.theme.StocksTheme
 import com.ramcosta.composedestinations.DestinationsNavHost
 import dagger.hilt.android.AndroidEntryPoint
