@@ -127,6 +127,8 @@ dependencies {
 
     // Dagger - Hilt
     implementation(libs.hilt.android)
+    // NEVER EVER EVER USE KSP AND KAPT WITH HILT HILT COMPILER
+    // THIS TOOK ME TWO HOURS TO DEBUG
     ksp(libs.hilt.android.compiler)
     ksp(libs.androidx.hilt.compiler)
 
