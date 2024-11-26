@@ -1,11 +1,9 @@
 package com.example.stocks.presentation.company_listings
 
-import androidx.lifecycle.SavedStateHandle
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.stocks.domain.navigation.StockDestination
 import com.example.stocks.domain.repository.StockRepository
-import com.example.stocks.domain.use_case.navigation.NavigationUseCase
 import com.example.stocks.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -19,26 +17,31 @@ import javax.inject.Inject
  * The purpose of the ViewModel is to access the data layer functions using abstractions, taking
  * the data retrieved from those repository abstractions, and mapping it to States that we can
  * show in our UI. The ViewModel maintains the State even through configuration changes.
+ *
+ * Dependency injection involves constructor injection; we are going to be passing the instance
+ * variable -- the StockRepository -- to the ViewModel, so that we don't need to instantiate an
+ * instance of the repository inside the ViewModel. This gives a huge amount of flexibility, since
+ * we don't need to limit our ViewModel to a specific repository; we can mock a repository for our
+ * tests, and it will still function properly. Try to always use dependency injection when it comes
+ * to adding dependencies rather than instantiating them within the ViewModel.
  */
 
 @HiltViewModel
 class CompanyListingsViewModel @Inject constructor(
-    private val repository: StockRepository,
-    private val savedStateHandle: SavedStateHandle,
-    private val navigationUseCase: NavigationUseCase
+    private val repository: StockRepository
 ) : ViewModel() {
 
     private var _state = MutableStateFlow(CompanyListingsState())
     val state = _state.asStateFlow() // Exposed read only value of state
 
-    /**
-     * This UseCase abstracts navigation events and centralizes navigation-related decisions.
-     * The UseCase is being implemented by the NavigationCoordinator; calling navigation()
-     * will invoke NavigationCoordinator.navigate()
-     */
+    init {
+        Log.d("CompanyListingsViewModel", "Repository injected: $repository")
+        getCompanyListings()
+    }
+
     fun onCompanySelected(symbol: String) {
         viewModelScope.launch {
-            navigationUseCase.navigate(StockDestination.CompanyDetails(symbol))
+            // Take user to the Destination Screen
         }
     }
 
@@ -78,10 +81,11 @@ class CompanyListingsViewModel @Inject constructor(
                 // fetchFromRemote = true.
                 getCompanyListings(fetchFromRemote = true)
             }
+
             is CompanyListingsEvent.OnSearchQueryChanged -> {
                 // Change the state value to the event's query
                 updateState {
-                   copy(searchQuery = event.query)
+                    copy(searchQuery = event.query)
                 }
                 // If we already have a search job running, we should cancel it if we start a
                 // new search. For example, if I type something, then .5s later I type another
@@ -135,6 +139,7 @@ class CompanyListingsViewModel @Inject constructor(
                                 }
                             }
                         }
+
                         is Resource.Error -> Unit
                         is Resource.Loading -> {
                             // Set loading to whatever was emitted by the result

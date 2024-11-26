@@ -1,5 +1,6 @@
 package com.example.stocks.data.csv
 
+import android.util.Log
 import com.example.stocks.domain.model.CompanyListing
 import com.opencsv.CSVReader
 import kotlinx.coroutines.Dispatchers
@@ -11,12 +12,18 @@ import javax.inject.Singleton
 
 /**
  * The actual implementation of the CSVParser interface. We declare it as a Singleton so that the
- * same instance of it can be used throughout the app, and we include @Inject, even without
- * constructor variables, so that Dagger/Hilt knows how to provide it to other classes for
- * dependency injection.
+ * same instance of it can be used throughout the app, and we include @Inject. This means without
+ * constructor variables, so Dagger/Hilt knows how to provide it to other classes for
+ * dependency injection and we don't need to write a @Provides function for it in the AppModule.
+ * If the class had arguments, and all the constructor arguments were injected as well, then we
+ * also wouldn't need to add a @Provides function for it.
  */
 @Singleton
 class CompanyListingsParser @Inject constructor() : CSVParser<CompanyListing> {
+
+    init {
+        Log.d("HiltDebug", "CompanyListingsParser initialized")
+    }
 
     /**
      * We create csvReader from an InputStreamReader(), which requires an InputStream, which

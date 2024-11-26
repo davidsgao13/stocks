@@ -7,6 +7,8 @@ plugins {
     alias(libs.plugins.ksp) apply false                 // Kotlin Symbol Processing
     alias(libs.plugins.compose.compiler) apply false    // For Jetpack Compose Compiler
     alias(libs.plugins.google.secrets) apply false
+    alias(libs.plugins.hilt) apply false
+    alias(libs.plugins.androidx.room) apply false
 }
 
 // Task to clean the build directory

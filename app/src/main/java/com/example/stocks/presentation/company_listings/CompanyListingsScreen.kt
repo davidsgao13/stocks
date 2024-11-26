@@ -1,5 +1,6 @@
 package com.example.stocks.presentation.company_listings
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,17 +18,24 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
+import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
 /**
- * In this case, we're going to use a ComposeNavigator to align with the native Compose
- * navigation library, leveraging 2.8.0's new type-safety features. In this case, we want
- * to add the ViewModel as part of the Screen to adhere to clean architecture; we don't want
- * to handle navigation, which is a UI event, in the ViewModel. The ViewModel should only emit
- * State, it shouldn't actually control navigation between views.
+ * In this case, we're going to use the destinations compose library to align with native
+ * Compose, leveraging 2.8.0's new type-safety features. It allows us to easily manage
+ * navigation in Jetpack compose, no longer needing routes; the @Destination annotation will take
+ * care of parameters and provide parameters in a type-safe manner.
+ *
+ * In this case, we also want to add the ViewModel as part of the Screen to adhere to clean
+ * architecture; we don't want to handle navigation, which is a UI event, in the ViewModel.
+ * The ViewModel should only emit. State, it shouldn't actually control navigation between views.
  */
 
 @Composable
+@Destination(start = true)
 fun CompanyListingsScreen(
+    navigator: DestinationsNavigator,
     viewModel: CompanyListingsViewModel = hiltViewModel()
 ) {
     // Use collectAsState to observe the state flow, since state is a MutableStateFlow() and not
@@ -39,6 +47,7 @@ fun CompanyListingsScreen(
     // viewModel.state.collectAsState() instead, making our UI reactive. Whenever the StateFlow
     // emits a new value, because our UI is reactive, recomposition will occur automatically.
 
+    Log.d("CompanyListingsScreen", "Screen rendered")
     val state by viewModel.state.collectAsState()
     val swipeRefreshState = rememberSwipeRefreshState(
         isRefreshing = state.isRefreshing
@@ -98,6 +107,7 @@ fun CompanyListingsScreen(
                             }
                             .padding(16.dp)
                     )
+                    // Create padding between each item on the list, except for the last item
                     if (index < state.listings.size) {
                         HorizontalDivider(modifier = Modifier.padding(
                             horizontal = 16.dp

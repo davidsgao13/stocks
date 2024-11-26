@@ -6,6 +6,8 @@ plugins {
     alias(libs.plugins.ksp) // Kotlin Symbol Processing with version
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.google.secrets)
+    alias(libs.plugins.hilt)
+    alias(libs.plugins.androidx.room)
 }
 
 kotlin {
@@ -27,9 +29,12 @@ android {
         buildFeatures {
             buildConfig = true
         }
-        defaultConfig {
-            // Secrets to be read
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments["room.schemaLocation"] = "$projectDir/schemas"
+            }
         }
+
         applicationId = "com.example.stocks"
         minSdk = 26
         targetSdk = 35
@@ -41,7 +46,7 @@ android {
     buildTypes {
         debug {
             isDebuggable = true
-            isMinifyEnabled = true
+            isMinifyEnabled = false
             isShrinkResources = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -80,6 +85,18 @@ android {
     }
 }
 
+/**
+ * Adding a schema export in Room allows the database structure to be captured in JSON files for
+ * each version of the database. These schema files are essential for tracking changes to the
+ * database over time and ensuring proper migrations between database versions. Room enforces schema
+ * exporting by default because maintaining a migration history is critical for production apps
+ * with persistent data. It helps with migrations and debugging.
+ */
+
+room {
+    schemaDirectory("schemas") // Use a String path
+}
+
 dependencies {
     // General libraries
     implementation(libs.androidx.core.ktx)
@@ -105,6 +122,7 @@ dependencies {
     implementation(libs.navigation.compose)
     implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.kotlinx.serialization.json)
+    implementation(libs.compose.destinations.core)
     ksp(libs.ksp)
 
     // Dagger - Hilt

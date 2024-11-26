@@ -3,15 +3,17 @@ accompanistSwiperefresh = "0.24.2-alpha"
 activityCompose = "1.9.3"
 agp = "8.7.2"
 core = "1.1.2-beta"
+coreVersion = "1.1.2-beta"
 espressoCore = "3.6.1"
 hiltAndroidCompiler = "2.49"
 hiltCompiler = "1.2.0"
+hiltLifecycleViewmodel = "1.0.0-alpha03"
 junit = "4.13.2"
 junitVersion = "1.2.1"
 kotlin = "2.0.21"
 coreKtx = "1.15.0"
 hilt = "2.52"
-ksp = "2.0.21-1.0.27"
+ksp = "2.0.21-1.0.28"
 lifecycleRuntimeKtx = "2.8.7"
 okhttp = "5.0.0-alpha.3"
 opencsv = "5.5.2"
@@ -43,6 +45,7 @@ androidx-compose-ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4
 androidx-compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "uiTestJunit4" }
 androidx-compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "uiTestJunit4" }
 converter-moshi = { module = "com.squareup.retrofit2:converter-moshi", version.ref = "retrofit" }
+compose-destinations-core = { module = "io.github.raamcosta.compose-destinations:core", version.ref = "coreVersion" }
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
 hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hiltAndroidCompiler" }
 junit = { module = "junit:junit", version.ref = "junit" }
@@ -62,4 +65,6 @@ kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref =
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 google-secrets = { id = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin", version.ref = "googleSecrets" }
+hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
+androidx-room = { id = "androidx.room", version.ref = "roomRuntime" }
 

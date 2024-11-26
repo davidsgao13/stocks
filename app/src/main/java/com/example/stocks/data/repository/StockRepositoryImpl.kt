@@ -1,5 +1,6 @@
 package com.example.stocks.data.repository
 
+import android.util.Log
 import com.example.stocks.data.csv.CSVParser
 import com.example.stocks.data.local.StockDatabase
 import com.example.stocks.data.mapper.toCompanyListing
@@ -36,15 +37,27 @@ import javax.inject.Singleton
 @Singleton
 class StockRepositoryImpl @Inject constructor(
     private val stockApi: StockApi,
-    stockDatabase: StockDatabase,
-    // Note that we are implementing CSVParser<CompanyListing> rather than CompanyListingsParser
-    // because we want to depend on the abstraction and not the concretion. We just simply
-    // pass in the CompanyListing object to the CSVParser, and since we wrote a
-    // CompanyListingsParser that implements CSVParser<CompanyListing>, it will use that
-    // functionality. If CompanyListingsParser were to ever change, since we're just using the
-    // interface with CSVParser<CompanyListing>, we wouldn't need to change anything
+    private val stockDatabase: StockDatabase,
+    /**
+     * Note that we are implementing CSVParser<CompanyListing> rather than CompanyListingsParser
+     * because we want to depend on the abstraction and not the concretion. We just simply
+     * pass in the CompanyListing object to the CSVParser, and since we wrote a
+     * CompanyListingsParser that implements CSVParser<CompanyListing>, it will use that
+     * functionality. If CompanyListingsParser were to ever change, since we're just using the
+     * interface with CSVParser<CompanyListing>, we wouldn't need to change anything.
+     *
+     * ALSO NOTE: We are passing a type of CSVParser, which is being used as an abstraction for
+     * our CompanyListingsParser. However, we STILL need to add a @Provides method to inject
+     * the CSVParser in a module in order for Hilt to know how to provide it. Even though
+     * we have an @Inject method for our implementation, the CompanyListingsParser, we don't
+     * have one for the abstraction, the CSVParser, which StockRepositoryImpl is expecting.
+     */
     private val companyListingsParser: CSVParser<CompanyListing>
 ) : StockRepository {
+
+    init {
+        Log.d("HiltDebug", "StockRepositoryImpl initialized")
+    }
 
     /**
      * Allows us to get all the CompanyListings from the database.

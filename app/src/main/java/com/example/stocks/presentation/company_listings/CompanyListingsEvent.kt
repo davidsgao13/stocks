@@ -8,6 +8,6 @@ package com.example.stocks.presentation.company_listings
  * actually implement the result of that Event.
  */
 sealed class CompanyListingsEvent {
-    object Refresh: CompanyListingsEvent()
+    data object Refresh: CompanyListingsEvent()
     data class OnSearchQueryChanged(val query: String) : CompanyListingsEvent()
 }
