@@ -179,54 +179,40 @@ class StockRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getIntradayInfo(symbol: String): Flow<Resource<List<IntradayInfo>>> {
-        return flow {
-            try {
-                // Retrieve the response for intraday info for the queried symbol, then return
-                // the results of that response and emit a Success flow
-                val response = stockApi.getIntradayInfo(symbol)
-                val results = intradayInfoParser.parse(response.byteStream())
-                emit(Resource.Success(results))
-            } catch (e: IOException) {
-                e.printStackTrace()
-                emit(
-                    Resource.Error(
-                        message = "Couldn't load intraday info."
-                    )
-                )
-            } catch (e: HttpException) {
-                e.printStackTrace()
-                emit(
-                    Resource.Error(
-                        message = "Couldn't load intraday info."
-                    )
-                )
-            }
+    /**
+     * Return a Resource rather than a Flow because this is a one-time operation that does not
+     * rely on a stream of data or updates over time.
+     */
+    override suspend fun getIntradayInfo(symbol: String): Resource<List<IntradayInfo>> {
+        return try {
+            // Retrieve the response for intraday info for the queried symbol, then return
+            // the results of that response and emit a Success Resource
+            val response = stockApi.getIntradayInfo(symbol)
+            val results = intradayInfoParser.parse(response.byteStream())
+            Resource.Success(results)
+        } catch (e: IOException) {
+            e.printStackTrace()
+            Resource.Error(message = "Couldn't load intraday info.")
+        } catch (e: HttpException) {
+            e.printStackTrace()
+            Resource.Error(message = "Couldn't load intraday info.")
         }
     }
 
-    override suspend fun getCompanyInfo(symbol: String): Flow<Resource<CompanyInfo>> {
-        return flow {
-            try {
-                val result = stockApi.getCompanyInfo(symbol)
-                emit(Resource.Success(result.toCompanyInfo()))
-            } catch (e: IOException) {
-                e.printStackTrace()
-                emit(
-                    Resource.Error(
-                        message = "Couldn't load intraday info."
-                    )
-                )
-            } catch (e: HttpException) {
-                e.printStackTrace()
-                emit(
-                    Resource.Error(
-                        message = "Couldn't load intraday info."
-                    )
-                )
-            }
+    /**
+     * Return a Resource rather than a Flow because this is a one-time operation that does not
+     * rely on a stream of data or updates over time.
+     */
+    override suspend fun getCompanyInfo(symbol: String): Resource<CompanyInfo> {
+        return try {
+            val result = stockApi.getCompanyInfo(symbol)
+            Resource.Success(result.toCompanyInfo())
+        } catch (e: IOException) {
+            e.printStackTrace()
+            Resource.Error(message = "Couldn't load intraday info.")
+        } catch (e: HttpException) {
+            e.printStackTrace()
+            Resource.Error(message = "Couldn't load intraday info.")
         }
     }
-
-
 }

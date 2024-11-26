@@ -34,6 +34,10 @@ abstract class RepositoryModule {
         companyListingsParser: CompanyListingsParser
     ): CSVParser<CompanyListing>
 
+    /**
+     * Same exact logic as the CompanyListingsParser
+     */
+
     @Binds
     @Singleton
     abstract fun bindIntradayInfoParser(

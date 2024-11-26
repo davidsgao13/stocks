@@ -48,6 +48,23 @@ interface StockRepository {
      *
      * @query is just the String query that we'll be inputting into the search text when searching
      * for company listings.
+     *
+     * Note 1: if there is a query that enables real-time search, caching to combine local and remote
+     * data sources, multiple emissions over time in the form of streaming to represent dynamic
+     * updates, or loading as a function of the UI, you should use a Flow
+     *
+     * Note 2: Flows greatly assist with backpressure, which occurs when a producer, which is a
+     * source of data (API, database), emits data faster than the consume, the part of the app
+     * that processes the data (database, UI component, file writer) can consume it. There is a risk
+     * of resource exhaustion if this occurs. This type of issue happens because consumers might
+     * need to take time to process each item due to operations like I/O, computation, or rendering
+     * delays. Flows ensure that the producer adjusts its emission rate to align with the consumer's
+     * capacity. You can do this with calls like .buffer(), which temporarily stores values so that
+     * the producer doesn't have to wait for the consumer to be ready in order to keep producing
+     * values. This is very helpful in streaming. Other helpful operations include:
+     * - debounce(), which emits the most recent value after a delay, removing intermediate results
+     * - conflate(), which only keeps the latest value when the consumer is slow
+     * - sample(), which emits a value at a decided, fixed interval
      */
 
     suspend fun getCompanyListings(
@@ -59,13 +76,22 @@ interface StockRepository {
      * Similar logic for these two network calls; we will be providing a symbol and retrieving both
      * the IntradayInfo and the CompanyInfo objects from that symbol. We wrap both of these in
      * a Resource, since we want to handle the different states of the request (e.g. Error, Success,
-     * Loading, etc.)
+     * Loading). However, we don't wrap these methods in a Flow, because these are one-shot events
+     * that return a single value. Unlike getCompanyListings, which is a request we may want to have
+     * a continuous connection to, we only return one value per request, so we only ever need to
+     * return a Resource.
+     *
+     * Note: despite getIntradayInfo returning a List, which can contain multiple values, it is
+     * still a single value that happens to contain multiple items, whereas in getCompanyListings,
+     * we want to get live updates to the company listings, so we return it as a flow. In this case
+     * the CompanyInfoScreen is static once the user arrives on the page and doesn't make further
+     * query checks for updates.
      */
     suspend fun getIntradayInfo(
         symbol: String
-    ) : Flow<Resource<List<IntradayInfo>>>
+    ) : Resource<List<IntradayInfo>>
 
     suspend fun getCompanyInfo(
         symbol: String
-    ) : Flow<Resource<CompanyInfo>>
+    ) : Resource<CompanyInfo>
 }
