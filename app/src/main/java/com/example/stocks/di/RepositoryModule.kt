@@ -2,8 +2,10 @@ package com.example.stocks.di
 
 import com.example.stocks.data.csv.CSVParser
 import com.example.stocks.data.csv.CompanyListingsParser
+import com.example.stocks.data.csv.IntradayInfoParser
 import com.example.stocks.data.repository.StockRepositoryImpl
 import com.example.stocks.domain.model.CompanyListing
+import com.example.stocks.domain.model.IntradayInfo
 import com.example.stocks.domain.repository.StockRepository
 import dagger.Binds
 import dagger.Module
@@ -32,6 +34,11 @@ abstract class RepositoryModule {
         companyListingsParser: CompanyListingsParser
     ): CSVParser<CompanyListing>
 
+    @Binds
+    @Singleton
+    abstract fun bindIntradayInfoParser(
+        intradayInfoParser: IntradayInfoParser
+    ) : CSVParser<IntradayInfo>
 
     /**
      * Same logic here -- we want to inject StockRepositoryImpl, since we're trying to use its

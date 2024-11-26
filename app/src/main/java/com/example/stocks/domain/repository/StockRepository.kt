@@ -1,6 +1,8 @@
 package com.example.stocks.domain.repository
 
+import com.example.stocks.domain.model.CompanyInfo
 import com.example.stocks.domain.model.CompanyListing
+import com.example.stocks.domain.model.IntradayInfo
 import com.example.stocks.util.Resource
 import kotlinx.coroutines.flow.Flow
 
@@ -52,4 +54,18 @@ interface StockRepository {
         fetchFromRemote: Boolean,
         query: String
     ) : Flow<Resource<List<CompanyListing>>>
+
+    /**
+     * Similar logic for these two network calls; we will be providing a symbol and retrieving both
+     * the IntradayInfo and the CompanyInfo objects from that symbol. We wrap both of these in
+     * a Resource, since we want to handle the different states of the request (e.g. Error, Success,
+     * Loading, etc.)
+     */
+    suspend fun getIntradayInfo(
+        symbol: String
+    ) : Flow<Resource<List<IntradayInfo>>>
+
+    suspend fun getCompanyInfo(
+        symbol: String
+    ) : Flow<Resource<CompanyInfo>>
 }

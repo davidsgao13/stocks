@@ -1,12 +1,14 @@
 package com.example.stocks.data.repository
 
-import android.util.Log
 import com.example.stocks.data.csv.CSVParser
 import com.example.stocks.data.local.StockDatabase
+import com.example.stocks.data.mapper.toCompanyInfo
 import com.example.stocks.data.mapper.toCompanyListing
 import com.example.stocks.data.mapper.toCompanyListingEntity
 import com.example.stocks.data.remote.StockApi
+import com.example.stocks.domain.model.CompanyInfo
 import com.example.stocks.domain.model.CompanyListing
+import com.example.stocks.domain.model.IntradayInfo
 import com.example.stocks.domain.repository.StockRepository
 import com.example.stocks.util.Resource
 import kotlinx.coroutines.flow.Flow
@@ -52,12 +54,9 @@ class StockRepositoryImpl @Inject constructor(
      * we have an @Inject method for our implementation, the CompanyListingsParser, we don't
      * have one for the abstraction, the CSVParser, which StockRepositoryImpl is expecting.
      */
-    private val companyListingsParser: CSVParser<CompanyListing>
+    private val companyListingsParser: CSVParser<CompanyListing>,
+    private val intradayInfoParser: CSVParser<IntradayInfo>
 ) : StockRepository {
-
-    init {
-        Log.d("HiltDebug", "StockRepositoryImpl initialized")
-    }
 
     /**
      * Allows us to get all the CompanyListings from the database.
@@ -179,5 +178,55 @@ class StockRepositoryImpl @Inject constructor(
             }
         }
     }
+
+    override suspend fun getIntradayInfo(symbol: String): Flow<Resource<List<IntradayInfo>>> {
+        return flow {
+            try {
+                // Retrieve the response for intraday info for the queried symbol, then return
+                // the results of that response and emit a Success flow
+                val response = stockApi.getIntradayInfo(symbol)
+                val results = intradayInfoParser.parse(response.byteStream())
+                emit(Resource.Success(results))
+            } catch (e: IOException) {
+                e.printStackTrace()
+                emit(
+                    Resource.Error(
+                        message = "Couldn't load intraday info."
+                    )
+                )
+            } catch (e: HttpException) {
+                e.printStackTrace()
+                emit(
+                    Resource.Error(
+                        message = "Couldn't load intraday info."
+                    )
+                )
+            }
+        }
+    }
+
+    override suspend fun getCompanyInfo(symbol: String): Flow<Resource<CompanyInfo>> {
+        return flow {
+            try {
+                val result = stockApi.getCompanyInfo(symbol)
+                emit(Resource.Success(result.toCompanyInfo()))
+            } catch (e: IOException) {
+                e.printStackTrace()
+                emit(
+                    Resource.Error(
+                        message = "Couldn't load intraday info."
+                    )
+                )
+            } catch (e: HttpException) {
+                e.printStackTrace()
+                emit(
+                    Resource.Error(
+                        message = "Couldn't load intraday info."
+                    )
+                )
+            }
+        }
+    }
+
 
 }

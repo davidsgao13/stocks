@@ -1,6 +1,8 @@
 package com.example.stocks.data.mapper
 
 import com.example.stocks.data.local.CompanyListingEntity
+import com.example.stocks.data.remote.dto.CompanyInfoDto
+import com.example.stocks.domain.model.CompanyInfo
 import com.example.stocks.domain.model.CompanyListing
 
 /**
@@ -29,5 +31,18 @@ fun CompanyListing.toCompanyListingEntity() : CompanyListingEntity {
         name = name,
         symbol = symbol,
         exchange = exchange
+    )
+}
+
+fun CompanyInfoDto.toCompanyInfo() : CompanyInfo {
+    return CompanyInfo(
+        // Need to make a null check in case any of these values are null in the event that we
+        // hit a quota. These fields aren't included in every response once we've hit our quota, so
+        // we need to ensure that we return a non-null value.
+        symbol = symbol ?: "",
+        description = description ?: "",
+        name = name ?: "",
+        country = country ?: "",
+        industry = industry ?: ""
     )
 }

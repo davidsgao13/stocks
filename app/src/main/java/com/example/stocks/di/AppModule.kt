@@ -55,7 +55,6 @@ class AppModule {
     @Provides
     @Singleton
     fun providesStockApi() : StockApi {
-        Log.d("HiltDebug", "StockApi provided")
         // This tells Retrofit how to create a StockApi which will be used in dependency injection.
         // We start by initializing a new Retrofit instance.
         return Retrofit.Builder()
@@ -101,7 +100,6 @@ class AppModule {
     @Provides
     @Singleton
     fun providesStockDatabase(app: Application) : StockDatabase {
-        Log.d("HiltDebug", "StockDatabase provided")
         // In Android, a Context is an abstract class that can provide access to application level
         // resources. Application itself is actually a subclass of Context, so it is fine to
         // pass in Application alone as an argument. Note, this is the exact same thing as calling

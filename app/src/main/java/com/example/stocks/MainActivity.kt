@@ -22,11 +22,8 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Log.d("MainActivity", "onCreate reached") // Step 1
         setContent {
-            Log.d("MainActivity", "setContent called") // Step 2
             StocksTheme {
-                Log.d("MainActivity", "Theme applied") // Step 3
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
@@ -40,9 +37,7 @@ class MainActivity : ComponentActivity() {
                      * @NavGraphs.root is a generated object, specifically the startingDestination
                      * for the Destinations library.
                      */
-                    Log.d("MainActivity", "Surface created") // Step 4
                     DestinationsNavHost(navGraph = NavGraphs.root )
-                    Log.d("MainActivity", "DestinationsNavHost created") // Step 5
                 }
             }
         }

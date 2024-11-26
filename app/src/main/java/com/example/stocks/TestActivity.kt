@@ -26,6 +26,5 @@ class TestActivity : ComponentActivity() {
 
         // Retrieve ViewModel via the correct method
         val viewModel: CompanyListingsViewModel by viewModels()
-        Log.d("TestActivity", "ViewModel: $viewModel")
     }
 }

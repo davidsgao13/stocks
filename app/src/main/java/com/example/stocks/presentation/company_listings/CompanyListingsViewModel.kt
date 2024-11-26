@@ -35,7 +35,6 @@ class CompanyListingsViewModel @Inject constructor(
     val state = _state.asStateFlow() // Exposed read only value of state
 
     init {
-        Log.d("CompanyListingsViewModel", "Repository injected: $repository")
         getCompanyListings()
     }
 

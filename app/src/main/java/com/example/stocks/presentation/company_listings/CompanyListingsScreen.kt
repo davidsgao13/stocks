@@ -46,8 +46,6 @@ fun CompanyListingsScreen(
     // it isn’t observing StateFlow. This is why we should instantiate the state as
     // viewModel.state.collectAsState() instead, making our UI reactive. Whenever the StateFlow
     // emits a new value, because our UI is reactive, recomposition will occur automatically.
-
-    Log.d("CompanyListingsScreen", "Screen rendered")
     val state by viewModel.state.collectAsState()
     val swipeRefreshState = rememberSwipeRefreshState(
         isRefreshing = state.isRefreshing

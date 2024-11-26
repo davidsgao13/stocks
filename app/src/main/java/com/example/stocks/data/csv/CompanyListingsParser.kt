@@ -21,10 +21,6 @@ import javax.inject.Singleton
 @Singleton
 class CompanyListingsParser @Inject constructor() : CSVParser<CompanyListing> {
 
-    init {
-        Log.d("HiltDebug", "CompanyListingsParser initialized")
-    }
-
     /**
      * We create csvReader from an InputStreamReader(), which requires an InputStream, which
      * we've added as a constructor argument. Then, csvReader will do the following:
@@ -78,6 +74,11 @@ class CompanyListingsParser @Inject constructor() : CSVParser<CompanyListing> {
                         exchange = exchange ?: return@mapNotNull null
                     )
                 }
+                // .also is a scope function, and is called after the preceding operations have been
+                // applied, but not before a return function is called. It provides the purpose
+                // of offering a side effect, like cleaning up resources or logging, without
+                // impacting the main flow of the operation. In this case, immediately after the
+                // transformation, .also fires and cleans up our csvReader resource.
                 .also {
                     csvReader.close()
                 }
