@@ -11,6 +11,8 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.create
@@ -55,6 +57,12 @@ class AppModule {
     @Provides
     @Singleton
     fun providesStockApi() : StockApi {
+        val loggingInterceptor = HttpLoggingInterceptor().apply {
+            level = HttpLoggingInterceptor.Level.BODY
+        }
+        val okHttpClient = OkHttpClient.Builder()
+            .addInterceptor(loggingInterceptor)
+            .build()
         // This tells Retrofit how to create a StockApi which will be used in dependency injection.
         // We start by initializing a new Retrofit instance.
         return Retrofit.Builder()
@@ -64,6 +72,7 @@ class AppModule {
             // ConverterFactory will automatically transform JSON to Kotlin data classes. It is
             // used to more easily parse network responses and convert them into data classes.
             .addConverterFactory(MoshiConverterFactory.create())
+            .client(okHttpClient)
             // Builds a Retrofit instance with the above configurations. .build() validates all the
             // configurations provided and prepares Retrofit to handle HTTPS requests based on
             // the configurations. The object created from .build() represents the the configured

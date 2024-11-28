@@ -31,7 +31,8 @@ class IntradayInfoParser @Inject constructor() : CSVParser<IntradayInfo> {
          * or column 2 (high) or column 3 (low) at some point, so keep those in mind.
          */
         return withContext(Dispatchers.IO) {
-            csvReader.readAll()
+            csvReader
+                .readAll()
                 .drop(1)
                 .mapNotNull { line ->
                     // Similar to the CompanyListingsParser, we should return null to short circuit
@@ -42,10 +43,7 @@ class IntradayInfoParser @Inject constructor() : CSVParser<IntradayInfo> {
                     val close = line.getOrNull(4) ?: return@mapNotNull null
                     // We convert the data to a DTO object so that we may return it later
                     // as a domain object after conversion.
-                    val dto = IntradayInfoDto(
-                        timestamp,
-                        close.toDouble()
-                    )
+                    val dto = IntradayInfoDto(timestamp, close.toDouble())
                     dto.toIntradayInfo()
                 }.filter {
                     // Depending on the timezone, some entries in our table have a different
