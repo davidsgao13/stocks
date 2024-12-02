@@ -123,7 +123,7 @@ dependencies {
     implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.compose.destinations.core)
-    ksp(libs.ksp)
+    ksp(libs.destinations)
 
     // Dagger - Hilt
     implementation(libs.hilt.android)
